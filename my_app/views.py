@@ -90,9 +90,9 @@ class UserModelViewSet(ModelViewSet):
 
 
 
-# class UserReadOnlyModelViewSet(ReadOnlyModelViewSet):
-#     """
-#     """
+class UserReadOnlyModelViewSet(ReadOnlyModelViewSet):
+    """
+    """
 
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
