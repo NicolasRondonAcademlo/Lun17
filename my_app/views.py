@@ -1,12 +1,13 @@
 
 from django.contrib.auth.models import User
-from rest_framework.viewsets import ViewSet, ModelViewSet
+from rest_framework.viewsets import ViewSet, ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from .serializers import UserSerializer, ListUserSerializer, CreateUserSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAdminUser, AllowAny
 # Create your views here.
+from rest_framework.decorators import action
 from django.contrib.auth.hashers import make_password
 
 class UserViewSet(ViewSet):
@@ -72,3 +73,26 @@ class UserModelViewSet(ModelViewSet):
         else:
             serializer.save()
 
+    @action(detail=False)
+    def recent_users(self, request):
+        recent_users = User.objects.all().order_by('-date_joined')[:3]
+        page = self.paginate_queryset(recent_users)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(recent_users, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["post", "delete", "put"], permission_classes= [])
+    def foo():
+        pass
+
+
+
+
+# class UserReadOnlyModelViewSet(ReadOnlyModelViewSet):
+#     """
+#     """
+
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
